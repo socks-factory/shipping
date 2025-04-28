@@ -83,6 +83,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           file: docker/shipping/Dockerfile
+          build-args: BUILD_VERSION=${{ github.sha }}, BUILD_DATE=${{ github.event.head_commit.timestamp }}, COMMIT=${{ github.sha }}
           context: .
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
