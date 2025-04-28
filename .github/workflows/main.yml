@@ -21,6 +21,10 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
     env:
       GROUP: weaveworksdemos
       COMMIT: ${{ github.sha }}
