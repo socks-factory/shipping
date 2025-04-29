@@ -18,10 +18,6 @@ FROM openjdk:8-jre-alpine
 WORKDIR /usr/src/app
 COPY --from=build /usr/src/mymaven/target/shipping.jar ./app.jar
 
-RUN	chown -R myuser:mygroup ./app.jar
-
-USER myuser
-
 ARG BUILD_DATE=""
 ARG BUILD_VERSION="0.0.2-SNAPSHOT"
 ARG COMMIT="test"
