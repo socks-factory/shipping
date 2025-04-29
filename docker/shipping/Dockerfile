@@ -13,7 +13,7 @@ WORKDIR /usr/src/mymaven
 
 RUN mvn -DskipTests package
 
-FROM weaveworksdemos/msd-java:jre-latest
+FROM openjdk:8-jre-alpine
 
 WORKDIR /usr/src/app
 COPY --from=build /usr/src/mymaven/target/shipping.jar ./app.jar
@@ -30,7 +30,7 @@ ENV BUILD_VERSION=${BUILD_VERSION}
 ENV BUILD_DATE=${BUILD_DATE}
 ENV COMMIT=${COMMIT}
 
-LABEL org.label-schema.vendor="Weaveworks" \
+LABEL org.label-schema.vendor="SUSE" \
   org.label-schema.build-date="${BUILD_DATE}" \
   org.label-schema.version="${BUILD_VERSION}" \
   org.label-schema.name="Socks Shop: Shipping" \
@@ -40,4 +40,4 @@ LABEL org.label-schema.vendor="Weaveworks" \
   org.label-schema.vcs-ref="${COMMIT}" \
   org.label-schema.schema-version="1.0"
 
-ENTRYPOINT ["/usr/local/bin/java.sh","-jar","./app.jar", "--port=80"]
+ENTRYPOINT ["java","-jar","./app.jar", "--port=80"]
