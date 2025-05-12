@@ -13,18 +13,12 @@ WORKDIR /usr/src/mymaven
 
 RUN mvn -DskipTests package
 
-FROM openjdk:8-jre-alpine
+FROM ghcr.io/socks-factory/openjdk-base-container:main
 
-WORKDIR /usr/src/app
-COPY --from=build /usr/src/mymaven/target/shipping.jar ./app.jar
-
-ARG BUILD_DATE=""
-ARG BUILD_VERSION="0.0.2-SNAPSHOT"
-ARG COMMIT="test"
-
-ENV BUILD_VERSION=${BUILD_VERSION}
-ENV BUILD_DATE=${BUILD_DATE}
-ENV COMMIT=${COMMIT}
+ENV	SERVICE_USER=myuser \
+	SERVICE_UID=10001 \
+	SERVICE_GROUP=mygroup \
+	SERVICE_GID=10001
 
 LABEL org.label-schema.vendor="SUSE" \
   org.label-schema.build-date="${BUILD_DATE}" \
@@ -36,4 +30,18 @@ LABEL org.label-schema.vendor="SUSE" \
   org.label-schema.vcs-ref="${COMMIT}" \
   org.label-schema.schema-version="1.0"
 
+WORKDIR /usr/src/app
+COPY --from=build /usr/src/mymaven/target/shipping.jar ./app.jar
+RUN chown -R ${SERVICE_USER}:${SERVICE_GROUP} ./app.jar
+
+ARG BUILD_DATE=""
+ARG BUILD_VERSION="0.0.2-SNAPSHOT"
+ARG COMMIT="test"
+
+ENV BUILD_VERSION=${BUILD_VERSION}
+ENV BUILD_DATE=${BUILD_DATE}
+ENV COMMIT=${COMMIT}
+
+USER ${SERVICE_USER}
+EXPOSE 80
 ENTRYPOINT ["java","-jar","./app.jar", "--port=80"]
